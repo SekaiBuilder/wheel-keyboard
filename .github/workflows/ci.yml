@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Privacidad y estructura
+        run: scripts/check.sh
+      - name: Sintaxis del JavaScript
+        run: |
+          awk '/<script>/{f=1;next}/<\/script>/{f=0}f' index.html > /tmp/teclado.js
+          node --check /tmp/teclado.js

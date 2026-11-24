@@ -1,5 +1,12 @@
 # Teclado de ruedas
 
+[![CI](https://github.com/SekaiBuilder/teclado-ruedas/actions/workflows/ci.yml/badge.svg)](https://github.com/SekaiBuilder/teclado-ruedas/actions/workflows/ci.yml)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
+
+**[Pruébalo en el navegador →](https://sekaibuilder.github.io/teclado-ruedas/)**
+
+![Las dos ruedas: consonantes y espacio a la izquierda, vocales y borrar a la derecha](docs/img/captura.png)
+
 Un teclado para escribir con los dos pulgares en el móvil o la tableta. Cada
 pulgar tiene una rueda de ocho direcciones: tocas, deslizas hacia la letra y
 sueltas. Aprende cómo escribes, resalta la letra que seguramente viene y
@@ -15,9 +22,13 @@ JavaScript, no dependencies. MIT licensed: credit Francesco Catania.*
 
 ## Probarlo
 
-Abre `index.html` en el navegador del móvil, en horizontal. No necesita
-instalar nada ni conexión: es un solo archivo de HTML, CSS y JavaScript, sin
-librerías. Lo aprendido se guarda sólo en ese navegador.
+Abre la [demo](https://sekaibuilder.github.io/teclado-ruedas/) o `index.html`
+en el navegador del móvil, en horizontal. No necesita instalar nada: es un
+solo archivo de HTML, CSS y JavaScript, sin librerías, y funciona sin conexión
+(sólo las tipografías vienen de Google Fonts). Lo aprendido se guarda sólo en
+ese navegador; ver [SECURITY.md](SECURITY.md).
+
+¿Quieres mejorarlo? Lee [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Cómo funciona
 
