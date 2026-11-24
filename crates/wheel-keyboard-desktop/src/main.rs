@@ -47,13 +47,12 @@ struct App {
 
 impl App {
     fn new() -> Self {
-        let mut kb = Keyboard::new(Config::default(), Layout::spanish());
-        if let Some(m) = model_path()
-            .and_then(|p| std::fs::read_to_string(p).ok())
-            .and_then(|t| Model::from_text(&t))
-        {
-            kb.set_model(m);
-        }
+        let layout = data_dir()
+            .and_then(|d| std::fs::read_to_string(d.join("layout.txt")).ok())
+            .and_then(|c| Layout::by_code(c.trim()))
+            .unwrap_or_default();
+        let mut kb = Keyboard::new(Config::default(), layout);
+        load_model(&mut kb);
         App {
             kb,
             text: String::new(),
@@ -78,11 +77,12 @@ impl App {
         if !self.model_dirty {
             return;
         }
-        if let Some(p) = model_path() {
-            if let Some(dir) = p.parent() {
-                let _ = std::fs::create_dir_all(dir);
-            }
-            let _ = std::fs::write(p, self.kb.model().to_text());
+        if let Some(dir) = data_dir() {
+            let _ = std::fs::create_dir_all(&dir);
+            let _ = std::fs::write(
+                model_file(&dir, self.kb.layout().code),
+                self.kb.model().to_text(),
+            );
         }
         self.model_dirty = false;
     }
@@ -318,6 +318,28 @@ impl eframe::App for App {
             ui.horizontal(|ui| {
                 ui.heading("Wheel Keyboard");
                 ui.separator();
+                let current = self.kb.layout().code;
+                let mut chosen = current;
+                egui::ComboBox::from_id_salt("layout")
+                    .selected_text(self.kb.layout().name)
+                    .show_ui(ui, |ui| {
+                        for l in Layout::all() {
+                            ui.selectable_value(&mut chosen, l.code, l.name);
+                        }
+                    });
+                if chosen != current {
+                    self.model_dirty = true;
+                    self.save_model();
+                    if let Some(l) = Layout::by_code(chosen) {
+                        self.kb.set_layout(l);
+                    }
+                    load_model(&mut self.kb);
+                    if let Some(dir) = data_dir() {
+                        let _ = std::fs::create_dir_all(&dir);
+                        let _ = std::fs::write(dir.join("layout.txt"), chosen);
+                    }
+                    self.status = format!("layout: {}", self.kb.layout().name);
+                }
                 let mut c = self.kb.config.context;
                 egui::ComboBox::from_id_salt("ctx")
                     .selected_text(format!("{c:?}"))
@@ -591,8 +613,8 @@ fn mod_names(m: wheel_keyboard::Modifiers) -> String {
         .collect()
 }
 
-/// Where the learnt model lives: the platform's per-user data folder.
-fn model_path() -> Option<PathBuf> {
+/// Where settings and learnt models live: the platform's per-user data folder.
+fn data_dir() -> Option<PathBuf> {
     let base = if cfg!(target_os = "macos") {
         std::env::var_os("HOME").map(|h| PathBuf::from(h).join("Library/Application Support"))
     } else if cfg!(target_os = "windows") {
@@ -602,5 +624,18 @@ fn model_path() -> Option<PathBuf> {
             .map(PathBuf::from)
             .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")))
     }?;
-    Some(base.join("wheel-keyboard").join("model.txt"))
+    Some(base.join("wheel-keyboard"))
+}
+
+/// One learnt model per layout, so languages don't mix.
+fn model_file(dir: &std::path::Path, code: &str) -> PathBuf {
+    dir.join(format!("model-{code}.txt"))
+}
+
+fn load_model(kb: &mut Keyboard) {
+    let m = data_dir()
+        .and_then(|d| std::fs::read_to_string(model_file(&d, kb.layout().code)).ok())
+        .and_then(|t| Model::from_text(&t))
+        .unwrap_or_default();
+    kb.set_model(m);
 }

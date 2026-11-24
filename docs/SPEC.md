@@ -1,6 +1,6 @@
 # Wheel Keyboard — specification
 
-Status: v3.1, engine in Rust. Last updated 2026-11-24.
+Status: v3.1, engine in Rust. Last updated 2026-11-24 (layouts for English, Italian and Japanese).
 
 The Rust engine (`crates/wheel-keyboard`) is the reference implementation.
 The browser demo (`docs/index.html`) is a test bench that follows the same
@@ -26,7 +26,9 @@ standalone engine any app can embed.
 - Hysteresis: once in a ring, the thumb has to pass the border by the ring
   margin (default 0.03 R, range 0–0.08) to switch; a direction keeps 3° past
   its sector edge.
-- Built-in layout (`Layout::spanish()`):
+- Built-in layouts: Spanish (default), English, Italian and Japanese romaji
+  (see the README table). Letters shared between languages keep their place.
+  Each layout keeps its own learnt model in the hosts. Spanish:
   - Consonants, inner: N S · NE R · E N · SE P · S G · SW B · W T · NW C;
     outer: V Q H J W X Z F.
   - Vowels, inner: N E · NE I · E D · SE U · S M · SW L · W O · NW A;
@@ -111,6 +113,7 @@ U → ú → ü), shown in the preview before lifting.
 | R-22 | What is learnt never leaves the device, has a cap, can be erased, and nothing is learnt in a password field |
 | R-23 | The engine has no dependencies and no platform code, and is usable from C (`wheel_keyboard.h`) |
 | R-24 | A desktop app for macOS, Windows and Linux, with touch and mouse input |
+| R-25 | Built-in Spanish, English, Italian and Japanese (romaji) layouts, each reaching A–Z once; shared letters keep their place; romaji has no automatic capitals |
 
 ## Acceptance
 
@@ -135,6 +138,11 @@ U → ú → ü), shown in the preview before lifting.
 | A-23 | Ring and direction hysteresis values | `geometry::tests` |
 | A-24 | A C program links the static library and types "s" | CI step "C example" (`examples/c/main.c`) and `wheel-keyboard-ffi` unit test |
 | A-25 | Desktop app: a mouse swipe up on the left wheel types S, on the right E, a tap types a space | Manual, 2026-11-24, macOS (synthetic mouse events): typed "Se q" |
+| A-26 | English: T, H, E → "The"; outer NE of the vowel wheel → ' | `a26_english_types_the` |
+| A-27 | Italian: L then ' → "l'"; holding E gives è, then é | `a27_italian_apostrophe_and_grave_accent` |
+| A-28 | Japanese: a r i g a t o u → "arigatou" with no capital in Text context | `a28_japanese_romaji_has_no_automatic_capitals` |
+| A-29 | Every layout reaches A–Z exactly once; shared letters keep their place | `layout::tests` |
+| A-30 | Browser demo: the language menu switches layouts (same strokes give "arigatou", "The", "L'", "Se") | Headless Chrome with synthetic pointer events, 2026-11-24 |
 | A-07 | Typing a sentence on a phone in landscape with no zoom or accidental selection | Manual, on device (browser demo) |
 
 ## Open decisions
@@ -142,7 +150,7 @@ U → ú → ü), shown in the preview before lifting.
 - D-02: How a host should tell the engine the context (front app) and secure
   input. Today the host sets `config.context` and `set_secure_input`.
 - D-03: Offer a personalised layout built from what was learnt?
-- D-05: Built-in layouts for other languages (English, Italian, Portuguese…).
+- D-05: More layouts (Portuguese, French, German…). A kana layout for Japanese without the input method?
 
 ## Not yet verified
 

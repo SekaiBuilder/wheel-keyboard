@@ -284,7 +284,7 @@ impl Keyboard {
     }
 
     fn auto_cap(&self) -> bool {
-        if self.config.context != Context::Text {
+        if self.config.context != Context::Text || !self.layout.auto_capitalize {
             return false;
         }
         if self.text.is_empty() || self.text.ends_with('\n') {

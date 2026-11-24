@@ -101,6 +101,12 @@ svg.wheel.idle{opacity:.38}
 <div id="app">
   <header>
     <h1>Wheel <span>Key</span><b>board</b></h1>
+    <select id="lang" aria-label="Layout language">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="it">Italiano</option>
+      <option value="ja">日本語 (romaji)</option>
+    </select>
     <select id="ctx" aria-label="Context (the app in front)">
       <option value="texto">Text</option>
       <option value="terminal">Terminal</option>
@@ -181,15 +187,43 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 const S = Object.assign({ size: 1, haptic: true, sound: false, rowCue: true, labels: true, context: 'texto',
-  vocales: 'R', mac: 'jis', pred: true, borde: true, secure: false }, store.get('ruedas.ajustes', {}));
+  vocales: 'R', mac: 'jis', pred: true, borde: true, secure: false, lang: '' }, store.get('ruedas.ajustes', {}));
+if (!S.lang) { const nl = (navigator.language || 'en').slice(0, 2).toLowerCase(); S.lang = ['es', 'en', 'it', 'ja'].includes(nl) ? nl : 'en'; }
 if (S.margen3 == null) S.margen3 = 0.03; // v3.1 margin: the v2 one was too strong
 const saveS = () => store.set('ruedas.ajustes', S);
 
 // ---------- Data ----------
 // Directions clockwise: 0 N, 1 NE, 2 E, 3 SE, 4 S, 5 SW, 6 W, 7 NW.
 // The 16 most frequent Spanish letters go in the inner ring (~95 % of letters).
-const CON = { inner: ['S','R','N','P','G','B','T','C'], outer: ['V','Q','H','J','W','X','Z','F'] };
-const VOC = { inner: ['E','I','D','U','M','L','O','A'], outer: ['Y','Ñ','?','K','-','¿','.',','] };
+// Layouts. Shared letters keep their place across languages, so muscle memory carries over.
+// Same data as Layout::spanish/english/italian/japanese in crates/wheel-keyboard.
+const LAYOUTS = {
+  es: { con: { inner: ['S','R','N','P','G','B','T','C'], outer: ['V','Q','H','J','W','X','Z','F'] },
+        voc: { inner: ['E','I','D','U','M','L','O','A'], outer: ['Y','Ñ','?','K','-','¿','.',','] },
+        accent: { A: ['á'], E: ['é'], I: ['í'], O: ['ó'], U: ['ú','ü'] }, cap: true,
+        phrases: ['Hola, cómo estás', 'Copia el archivo y pégalo aquí', 'Mañana tengo una reunión a las nueve',
+          'Abre la terminal y escribe el comando', 'La casa está cerca del parque', 'Envíame el informe antes del viernes',
+          'Busca la carpeta de fotos del viaje', 'Nos vemos el sábado por la tarde', 'Esta semana trabajo desde casa'] },
+  en: { con: { inner: ['S','R','N','H','G','W','T','C'], outer: ['V','Q','F','J','P','X','Z','B'] },
+        voc: { inner: ['E','I','D','U','M','L','O','A'], outer: ['Y',"'",'?','K','-','!','.',','] },
+        accent: {}, cap: true,
+        phrases: ['See you on Saturday afternoon', 'Copy the file and paste it here', 'I have a meeting at nine tomorrow',
+          'Open the terminal and type the command', 'Send me the report before Friday', 'The house is near the park',
+          'Find the folder with the trip photos', 'I will restart the computer tonight', 'This week I work from home'] },
+  it: { con: { inner: ['S','R','N','P','G','V','T','C'], outer: ['B','Q','H','J','W','X','Z','F'] },
+        voc: { inner: ['E','I','D','U','M','L','O','A'], outer: ['Y',"'",'?','K','-','!','.',','] },
+        accent: { A: ['à'], E: ['è','é'], I: ['ì'], O: ['ò'], U: ['ù'] }, cap: true,
+        phrases: ['Ciao, come stai', 'Copia il file e incollalo qui', 'Domani ho una riunione alle nove',
+          'Apri il terminale e scrivi il comando', 'Mandami il rapporto prima di venerdì', 'La casa è vicino al parco',
+          'Ci vediamo sabato pomeriggio', "L'acqua del lago è fredda", 'Questa settimana lavoro da casa'] },
+  ja: { con: { inner: ['S','K','H','Y','G','Z','T','D'], outer: ['W','B','P','J','C','F','X','V'] },
+        voc: { inner: ['E','I','N','U','M','R','O','A'], outer: ['-','?','L','Q','[',']','.',','] },
+        accent: {}, cap: false,
+        phrases: ['konnichiwa', 'arigatou gozaimasu', 'ashita no kaigi wa kuji desu', 'kyou wa ii tenki desu ne',
+          'shuumatsu ni aimashou', 'kono fairu wo kopii shite kudasai', 'konshuu wa ie de shigoto shimasu',
+          'yoroshiku onegaishimasu'] }
+};
+const LAY = () => LAYOUTS[S.lang] || LAYOUTS.es;
 const mirror = r => ({ inner: r.inner.map((_, i) => r.inner[(8 - i) % 8]), outer: r.outer.map((_, i) => r.outer[(8 - i) % 8]) });
 const MAS_L = { inner: ['⌘','⌥','⌃','Esc','⏎','⌦','Tab','⇧'], outer: ['1','2','3','4','5','(',')','='] };
 const MAS_R = {
@@ -214,26 +248,19 @@ const NAMES = {
   navegador: { '⌘': { T:'Tab', W:'Close', L:'Address', R:'Reload', D:'Bookmark', N:'Window', '←':'Back', '→':'Forward' }, '⌃': { Tab:'Tab' } }
 };
 const DEF_CHIPS = { texto: ['⌘C','⌘V','⌘Z','⌘A'], terminal: ['⌃C','⌘K','⌃R','⌘T'], finder: ['⌘C','⌘V','⌘⌫','⌘N'], navegador: ['⌘T','⌘W','⌘L','⌘R'] };
-const ACCENT = { A: ['á'], E: ['é'], I: ['í'], O: ['ó'], U: ['ú','ü'] };
 const MODKEYS = ['⌃','⌥','⇧','⌘'];
-const FRASES = [
-  'Hola, cómo estás', 'Copia el archivo y pégalo aquí', 'Mañana tengo una reunión a las nueve',
-  'El teclado de ruedas es más rápido', 'Abre la terminal y escribe el comando',
-  'La casa está cerca del parque', 'Envíame el informe antes del viernes',
-  'Voy a reiniciar el Mac esta noche', 'Busca la carpeta de fotos del viaje', 'Quiero probar esto con calma',
-  'Nos vemos el sábado por la tarde', 'Esta semana trabajo desde casa'
-];
 const RING = [0.15, 0.5];        // dead zone, inner/outer border (fraction of R)
 const TOPBAR = 48;               // top band for each thumb's buttons
 const BORDE = 8, SIGMA = 12;     // border band and bell width, in degrees
 const ALPHA = 'abcdefghijklmnñopqrstuvwxyz';
-const WORD_RE = /([a-záéíóúüñ]+)$/i;
+const WORD_RE = /([a-zàáèéìíòóùúüñ]+)$/i;
 
 // ---------- Learning model ----------
 const blankModel = () => ({ v: 1, c: {}, w: {}, b: {}, rej: 0, letters: 0 });
-let model = Object.assign(blankModel(), store.get('ruedas.modelo', {}));
+const modelKey = () => S.lang === 'es' ? 'ruedas.modelo' : 'ruedas.modelo.' + S.lang;
+let model = Object.assign(blankModel(), store.get(modelKey(), {}));
 let saveTimer = 0;
-const saveModel = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => store.set('ruedas.modelo', model), 400); };
+const saveModel = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => store.set(modelKey(), model), 400); };
 const BASE = { á:'a', à:'a', ä:'a', é:'e', è:'e', ë:'e', í:'i', ì:'i', ï:'i', ó:'o', ò:'o', ö:'o', ú:'u', ù:'u', ü:'u' };
 const baseStr = w => Array.from(w.toLowerCase(), ch => BASE[ch] || ch).join('');
 const learning = () => S.pred && !S.secure;
@@ -311,7 +338,7 @@ const vowelSide = () => S.vocales === 'L' ? 'L' : 'R';
 function nameOf(mod, k) { return (NAMES[ctx()]?.[mod]?.[k]) ?? (NAMES.texto[mod]?.[k]) ?? ''; }
 function activeMods() { const m = MODKEYS.filter(k => mods[k]); if (chord && !m.includes(chord.mod)) m.push(chord.mod); return MODKEYS.filter(k => m.includes(k)); }
 function hasCmdMods() { return activeMods().some(k => k !== '⇧'); }
-function autoCap() { return ctx() === 'texto' && (text === '' || /[.!?¿¡]\s$|\n$/.test(text)); }
+function autoCap() { return LAY().cap && ctx() === 'texto' && (text === '' || /[.!?¿¡]\s$|\n$/.test(text)); }
 function upperNow() { return mods['⇧'] > 0 || autoCap(); }
 
 function ringsFor(side) {
@@ -326,7 +353,7 @@ function ringsFor(side) {
     const outer = S.mac === 'jis' ? r.outer.map(k => k === ';' ? '¥' : k) : r.outer;
     return { inner: r.inner, outer, center };
   }
-  let r = side === vowelSide() ? VOC : CON;
+  let r = side === vowelSide() ? LAY().voc : LAY().con;
   if (S.vocales === 'L') r = mirror(r);
   return { ...r, center };
 }
@@ -439,7 +466,7 @@ function correct(sel, keys) {
   return { ...sel, dir: nd, key: nk, fixedFrom: sel.key };
 }
 function sameSel(a, b) { return (!a && !b) || (a && b && a.ring === b.ring && a.dir === b.dir); }
-function accented(k, lvl) { return lvl && ACCENT[k] ? ACCENT[k][Math.min(lvl, ACCENT[k].length) - 1] : null; }
+function accented(k, lvl) { return lvl && LAY().accent[k] ? LAY().accent[k][Math.min(lvl, LAY().accent[k].length) - 1] : null; }
 
 function showPreview(w) {
   const p = $('#preview');
@@ -645,8 +672,8 @@ zone.addEventListener('pointermove', e => {
   if (!sameSel(prev, w.sel) || (prev && w.sel && prev.fixedFrom !== w.sel.fixedFrom)) {
     if (!sameSel(prev, w.sel)) {
       w.acc = 0; clearTimeout(w.accTimer);
-      if (w.sel && ACCENT[w.sel.key] && !hasCmdMods()) {
-        const step = () => { if (!w.sel || !ACCENT[w.sel.key]) return; w.acc = w.acc >= ACCENT[w.sel.key].length ? 0 : w.acc + 1; showPreview(w); w.accTimer = setTimeout(step, 450); };
+      if (w.sel && LAY().accent[w.sel.key] && !hasCmdMods()) {
+        const step = () => { if (!w.sel || !LAY().accent[w.sel.key]) return; w.acc = w.acc >= LAY().accent[w.sel.key].length ? 0 : w.acc + 1; showPreview(w); w.accTimer = setTimeout(step, 450); };
         w.accTimer = setTimeout(step, 450);
       }
       if (w.side === 'L') {
@@ -691,7 +718,7 @@ $('#ime').addEventListener('click', () => {
 
 // ---------- Practice ----------
 function newPhrase() {
-  let t; do { t = FRASES[Math.floor(Math.random() * FRASES.length)]; } while (practice && t === practice.target && FRASES.length > 1);
+  let t; do { t = LAY().phrases[Math.floor(Math.random() * LAY().phrases.length)]; } while (practice && t === practice.target && LAY().phrases.length > 1);
   practice = { target: t, start: 0, load: { L: 0, R: 0 } }; text = ''; undo = []; lastFix = null;
   $('#target').hidden = false; refresh();
 }
@@ -741,7 +768,7 @@ function renderModelInfo() {
 let clearArmed = false;
 $('#clearModel').addEventListener('click', e => {
   if (!clearArmed) { clearArmed = true; e.target.textContent = 'Sure? Tap again to erase it all'; return; }
-  model = blankModel(); store.set('ruedas.modelo', model); clearArmed = false; e.target.textContent = 'Clear learnt data';
+  model = blankModel(); store.set(modelKey(), model); clearArmed = false; e.target.textContent = 'Clear learnt data';
   renderModelInfo(); refresh(); log('Learnt data cleared');
 });
 $('#btnSettings').addEventListener('click', () => {
@@ -756,6 +783,14 @@ for (const id of ['size', 'margen3']) $('#' + id).addEventListener('input', e =>
 for (const id of ['vocales', 'mac']) $('#' + id).addEventListener('change', e => { S[id] = e.target.value; saveS(); refresh(); });
 for (const id of ['labels', 'haptic', 'sound', 'rowCue', 'pred', 'borde', 'secure']) $('#' + id).addEventListener('change', e => { S[id] = e.target.checked; saveS(); refresh(); });
 $('#clearHist').addEventListener('click', () => { store.set('ruedas.historial', []); renderHist(); });
+$('#lang').value = S.lang;
+$('#lang').addEventListener('change', e => {
+  clearTimeout(saveTimer); store.set(modelKey(), model);
+  S.lang = e.target.value; saveS();
+  model = Object.assign(blankModel(), store.get(modelKey(), {}));
+  if (practice) newPhrase();
+  refresh(); log('Layout: ' + e.target.selectedOptions[0].textContent);
+});
 $('#ctx').value = S.context;
 $('#ctx').addEventListener('change', e => { S.context = e.target.value; saveS(); refresh(); });
 

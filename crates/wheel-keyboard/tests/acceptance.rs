@@ -281,3 +281,59 @@ fn model_survives_save_and_load() {
     other.set_model(Model::from_text(&saved).unwrap());
     assert_eq!(other.model(), kb.model());
 }
+
+fn with_layout(code: &str, context: Context) -> Keyboard {
+    Keyboard::new(
+        Config {
+            context,
+            ..Config::default()
+        },
+        Layout::by_code(code).unwrap(),
+    )
+}
+
+#[test]
+fn a26_english_types_the() {
+    let mut kb = with_layout("en", Context::Text);
+    let mut out = String::new();
+    out += &text(&swipe(&mut kb, Side::Left, 270.0, 0.3)); // T
+    out += &text(&swipe(&mut kb, Side::Left, 135.0, 0.3)); // H
+    out += &text(&swipe(&mut kb, Side::Right, 0.0, 0.3)); // E
+    assert_eq!(out, "The");
+    assert_eq!(text(&swipe(&mut kb, Side::Right, 45.0, 0.8)), "'");
+}
+
+#[test]
+fn a27_italian_apostrophe_and_grave_accent() {
+    let mut kb = with_layout("it", Context::Terminal);
+    assert_eq!(text(&swipe(&mut kb, Side::Right, 225.0, 0.3)), "l");
+    assert_eq!(text(&swipe(&mut kb, Side::Right, 45.0, 0.8)), "'");
+    // Holding E: first è, then é.
+    kb.touch_down(Side::Right, 0.0, 0.0, R, 0);
+    kb.touch_move(Side::Right, 0.0, -30.0, 10);
+    assert_eq!(kb.preview(Side::Right, 500).unwrap().label, "è");
+    assert_eq!(kb.preview(Side::Right, 950).unwrap().label, "é");
+    assert_eq!(text(&kb.touch_up(Side::Right, 500)), "è");
+    assert_eq!(kb.text_before_cursor(), "l'è");
+}
+
+#[test]
+fn a28_japanese_romaji_has_no_automatic_capitals() {
+    let mut kb = with_layout("ja", Context::Text);
+    let strokes = [
+        (Side::Right, 315.0), // a
+        (Side::Right, 225.0), // r
+        (Side::Right, 45.0),  // i
+        (Side::Left, 180.0),  // g
+        (Side::Right, 315.0), // a
+        (Side::Left, 270.0),  // t
+        (Side::Right, 270.0), // o
+        (Side::Right, 135.0), // u
+    ];
+    let typed: String = strokes
+        .iter()
+        .map(|(s, a)| text(&swipe(&mut kb, *s, *a, 0.3)))
+        .collect();
+    assert_eq!(typed, "arigatou");
+    assert_eq!(text(&swipe(&mut kb, Side::Right, 0.0, 0.8)), "-");
+}

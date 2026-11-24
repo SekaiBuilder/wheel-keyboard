@@ -36,11 +36,17 @@ typedef struct WkKeyboard WkKeyboard;
 #define WK_OPT_BORDER_CORRECTION 4u /* 1: fix taps on letter borders (default 1)   */
 #define WK_OPT_SECURE_INPUT      5u /* 1: password field, learn nothing            */
 #define WK_OPT_RING_MARGIN       6u /* ring hysteresis in thousandths of R (30)    */
+#define WK_OPT_LAYOUT            7u /* WK_LAYOUT_* (default Spanish)               */
 
 #define WK_CONTEXT_TEXT     0
 #define WK_CONTEXT_TERMINAL 1
 #define WK_CONTEXT_FINDER   2
 #define WK_CONTEXT_BROWSER  3
+
+#define WK_LAYOUT_SPANISH  0
+#define WK_LAYOUT_ENGLISH  1
+#define WK_LAYOUT_ITALIAN  2
+#define WK_LAYOUT_JAPANESE 3 /* romaji for the system input method */
 
 /* Buttons for wk_press */
 #define WK_BUTTON_SHIFT 0u

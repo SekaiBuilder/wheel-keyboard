@@ -91,8 +91,8 @@ for `aarch64-apple-ios` and link the static library; for Android, build with
   without moving types Space (consonant wheel) or deletes (vowel wheel; hold
   to keep deleting).
 - **Eight directions, two rings.** The inner ring holds the 16 most frequent
-  letters of the built-in layout (about 95 % of written Spanish); the outer
-  ring holds the rarer ones and punctuation. Eight is the most directions
+  letters of the language (90–96 % of what is written in Spanish, English or
+  Italian); the outer ring holds the rarer ones and punctuation. Eight is the most directions
   people hit reliably without looking.
 - **Vowels on one thumb, consonants on the other.** Most syllables alternate
   consonant and vowel, so the thumbs take turns on their own. Either hand can
@@ -126,10 +126,31 @@ for `aarch64-apple-ios` and link the static library; for Android, build with
 
 ## Layouts
 
-The built-in layout (`Layout::spanish()`) is the one the project was designed
-and tested with. `Layout` is a plain struct: build your own for another
-language by putting that language's 16 most frequent letters in the inner
-rings and splitting vowels and consonants between the thumbs.
+Four built-in layouts. Letters shared between languages keep the same place,
+so switching language doesn't retrain your thumbs. Each layout keeps its own
+learnt model.
+
+| Code | Layout | Inner rings (most frequent letters) | Notes |
+|---|---|---|---|
+| `es` | Spanish (`Layout::spanish()`) | E A O S R N I D L C T U M P B G, ~95 % | Ñ and ¿ in the outer ring; hold a vowel for á é í ó ú ü |
+| `en` | English (`Layout::english()`) | E T A O I N S H R D L C U M W G, ~90 % | Apostrophe for contractions; no accents |
+| `it` | Italian (`Layout::italian()`) | E A I O N L R T S C D P U M V G, ~96 % | Apostrophe (l'acqua); hold a vowel for à è é ì ò ù |
+| `ja` | Japanese, romaji (`Layout::japanese()`) | A I U E O N K S T H M R G Y Z D | Typed as romaji for the system input method (kana mode) to convert; `-` → ー, `[` `]` → 「」, X for small kana; no automatic capitals |
+
+```text
+            Consonant wheel (inner / outer)          Vowel wheel (inner / outer)
+es   S R N P G B T C  /  V Q H J W X Z F     E I D U M L O A  /  Y Ñ ? K - ¿ . ,
+en   S R N H G W T C  /  V Q F J P X Z B     E I D U M L O A  /  Y ' ? K - ! . ,
+it   S R N P G V T C  /  B Q H J W X Z F     E I D U M L O A  /  Y ' ? K - ! . ,
+ja   S K H Y G Z T D  /  W B P J C F X V     E I N U M R O A  /  - ? L Q [ ] . ,
+     (each list goes clockwise from the top: N NE E SE S SW W NW)
+```
+
+Pick one with `Layout::by_code("it")`, `WK_OPT_LAYOUT` in the C API, the
+menu in the desktop app or the language menu in the browser demo. `Layout` is
+a plain struct, so you can build your own: put the language's 16 most
+frequent letters in the inner rings and split vowels and consonants between
+the thumbs.
 
 ## How it was decided
 

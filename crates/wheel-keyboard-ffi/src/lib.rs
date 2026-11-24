@@ -9,8 +9,8 @@ use std::collections::VecDeque;
 use std::ffi::{CStr, CString, c_char};
 
 use wheel_keyboard::{
-    Action, Button, Context, Key, Keyboard, Layer, ModState, Model, Modifier, Modifiers, RingId,
-    Side,
+    Action, Button, Context, Key, Keyboard, Layer, Layout, ModState, Model, Modifier, Modifiers,
+    RingId, Side,
 };
 
 pub struct WkKeyboard {
@@ -141,6 +141,14 @@ pub unsafe extern "C" fn wk_set_option(kb: *mut WkKeyboard, option: u32, value: 
         4 => c.border_correction = value != 0,
         5 => w.kb.set_secure_input(value != 0),
         6 => c.ring_margin = (value as f32 / 1000.0).clamp(0.0, 0.08),
+        7 => {
+            if let Some(l) = usize::try_from(value)
+                .ok()
+                .and_then(|i| Layout::all().into_iter().nth(i))
+            {
+                w.kb.set_layout(l);
+            }
+        }
         _ => {}
     }
 }
