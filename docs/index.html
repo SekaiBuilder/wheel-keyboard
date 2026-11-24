@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Teclado de ruedas</title>
+<title>Wheel Keyboard</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Una pantalla: barra arriba, salida de texto, y abajo la zona de los pulgares partida en dos (izquierda azul, derecha naranja). */
+/* One screen: bar on top, text output, and the thumb area below split in two (left blue, right orange). */
 :root{
   --bg:#ECEEF2; --surface:#FFFFFF; --line:#D3D8E1; --fg:#141821; --muted:#5B6474;
   --left:#2662DE; --right:#D2561C; --ok:#1C844A; --bad:#C0352A; --wheel:rgba(255,255,255,.93);
@@ -100,74 +100,74 @@ svg.wheel.idle{opacity:.38}
 
 <div id="app">
   <header>
-    <h1>Teclado de <span>rue</span><b>das</b></h1>
-    <select id="ctx" aria-label="Contexto (la app de delante en el Mac)">
-      <option value="texto">Texto</option>
+    <h1>Wheel <span>Key</span><b>board</b></h1>
+    <select id="ctx" aria-label="Context (the app in front)">
+      <option value="texto">Text</option>
       <option value="terminal">Terminal</option>
       <option value="finder">Finder</option>
-      <option value="navegador">Navegador</option>
+      <option value="navegador">Browser</option>
     </select>
-    <button id="btnPractice">Práctica</button>
-    <button id="btnSettings" aria-label="Ajustes">Ajustes</button>
+    <button id="btnPractice">Practice</button>
+    <button id="btnSettings" aria-label="Settings">Settings</button>
   </header>
   <section id="out" aria-live="polite">
     <div id="target" hidden></div>
     <div id="text"></div>
-    <div class="row"><div id="sug" aria-label="Palabras sugeridas"></div><div id="chips"></div></div>
+    <div class="row"><div id="sug" aria-label="Suggested words"></div><div id="chips"></div></div>
   </section>
   <div id="zone">
     <svg id="wL" class="wheel idle"></svg>
     <svg id="wR" class="wheel idle"></svg>
     <div id="preview" hidden></div>
     <div id="mods"></div>
-    <div id="log">Toca una mitad y desliza hacia la letra</div>
+    <div id="log">Touch a half and slide towards the letter</div>
     <div class="ctl" id="ctlL">
-      <button id="shift" type="button" aria-label="Mayúscula">⇧</button>
-      <button id="more" type="button" aria-label="Más teclas">⋯</button>
+      <button id="shift" type="button" aria-label="Shift">⇧</button>
+      <button id="more" type="button" aria-label="More keys">⋯</button>
     </div>
     <div class="ctl" id="ctlR">
-      <button id="ime" type="button" aria-label="Cambiar entre かな y 英数" hidden>A</button>
-      <button id="enter" type="button" aria-label="Intro">⏎</button>
+      <button id="ime" type="button" aria-label="Switch between かな and 英数" hidden>A</button>
+      <button id="enter" type="button" aria-label="Enter">⏎</button>
     </div>
   </div>
 </div>
 
 <div id="sheet" hidden>
   <div class="card">
-    <h2>Ajustes</h2>
-    <fieldset><legend>Rueda</legend>
-      <label>Vocales en la mano <select id="vocales"><option value="R">derecha</option><option value="L">izquierda</option></select></label>
-      <label>Tamaño <input type="range" id="size" min="0.7" max="1.2" step="0.05"></label>
-      <label>Margen al cambiar de anillo <input type="range" id="margen3" min="0" max="0.08" step="0.01"></label>
-      <label><input type="checkbox" id="labels"> Ver las letras en reposo</label>
+    <h2>Settings</h2>
+    <fieldset><legend>Wheel</legend>
+      <label>Vowels on the <select id="vocales"><option value="R">right</option><option value="L">left</option></select></label>
+      <label>Size <input type="range" id="size" min="0.7" max="1.2" step="0.05"></label>
+      <label>Margin when changing rings <input type="range" id="margen3" min="0" max="0.08" step="0.01"></label>
+      <label><input type="checkbox" id="labels"> Show letters at rest</label>
     </fieldset>
-    <fieldset><legend>Mac</legend>
-      <label>Teclado del Mac <select id="mac"><option value="jis">JIS (japonés)</option><option value="iso">ISO (español)</option><option value="ansi">ANSI (EE. UU.)</option></select></label>
-      <p>En la app lo dirá el Mac solo. Con JIS aparece el botón あ/A (かな y 英数) y ¥ en la capa ⋯.</p>
-      <label><input type="checkbox" id="secure"> El Mac está en un campo de contraseña (simulado)</label>
+    <fieldset><legend>Target computer</legend>
+      <label>Keyboard <select id="mac"><option value="jis">JIS (Japanese)</option><option value="iso">ISO (European)</option><option value="ansi">ANSI (US)</option></select></label>
+      <p>An app can set this automatically. With JIS you get the あ/A button (かな and 英数) and ¥ in the ⋯ layer.</p>
+      <label><input type="checkbox" id="secure"> Typing into a password field (simulated)</label>
     </fieldset>
-    <fieldset><legend>Predicción</legend>
-      <label><input type="checkbox" id="pred"> Aprender, resaltar letras y sugerir palabras</label>
-      <label><input type="checkbox" id="borde"> Corregir los toques que caen en el borde</label>
+    <fieldset><legend>Prediction</legend>
+      <label><input type="checkbox" id="pred"> Learn, highlight letters and suggest words</label>
+      <label><input type="checkbox" id="borde"> Fix taps that land on a border</label>
       <p id="modelInfo"></p>
-      <button id="clearModel" type="button">Borrar lo aprendido</button>
+      <button id="clearModel" type="button">Clear learnt data</button>
     </fieldset>
-    <fieldset><legend>Respuesta</legend>
-      <label><input type="checkbox" id="haptic"> Vibración (iOS 18 o posterior; Android)</label>
-      <label><input type="checkbox" id="sound"> Sonido de tecla</label>
-      <label><input type="checkbox" id="rowCue"> Aviso al cambiar de anillo (vibra en Android; en iPhone el anillo destella y, con sonido, hace «tic»)</label>
+    <fieldset><legend>Feedback</legend>
+      <label><input type="checkbox" id="haptic"> Vibration (iOS 18 or later; Android)</label>
+      <label><input type="checkbox" id="sound"> Key sound</label>
+      <label><input type="checkbox" id="rowCue"> Cue when changing rings (vibrates on Android; on iPhone the ring flashes and, with sound on, ticks)</label>
     </fieldset>
-    <fieldset><legend>Cómo se usa</legend>
-      <p>Cada pulgar tiene una rueda de 8 direcciones. En el anillo de dentro están las 16 letras más usadas: las vocales en una mano y las consonantes en la otra, para que los pulgares se turnen. En el de fuera, las raras y los signos. Desliza y suelta; si vuelves al centro antes de soltar, no se escribe nada.</p>
-      <p>Tocar sin mover: en la rueda de las consonantes, espacio; en la de las vocales, borrar (si lo mantienes, repite). En el centro de la pantalla: ⇧, ⋯ y ⏎. Si dejas el dedo quieto sobre una vocal, sale con tilde.</p>
-      <p>El teclado empieza sin saber nada y aprende de cada palabra que terminas. Ilumina las letras que seguramente vienen y, si tocas justo en el borde entre dos letras, elige la más probable (lo verás antes de soltar). Si se equivoca, borra enseguida: vuelve la letra que tocaste.</p>
-      <p>«⋯» abre los modificadores, los números y los signos. ⌘ con un toque vale para la siguiente tecla, y con dos toques queda fijo. Si mantienes el pulgar izquierdo sobre ⌘, la rueda derecha enseña los atajos más usados.</p>
+    <fieldset><legend>How to use it</legend>
+      <p>Each thumb has a wheel with 8 directions. The inner ring holds the 16 most used letters: vowels on one hand and consonants on the other, so the thumbs take turns. The outer ring holds the rare ones and punctuation. Slide and lift; if you return to the centre before lifting, nothing is typed.</p>
+      <p>Tap without moving: Space on the consonant wheel, delete on the vowel wheel (hold to repeat). Above the wheels: ⇧, ⋯ and ⏎. Hold your thumb still on a vowel to get its accent.</p>
+      <p>The keyboard starts knowing nothing and learns from every word you finish. It lights up the letters likely to come next and, if you touch right on the border between two letters, picks the likelier one (you see it before lifting). If it gets it wrong, delete right away: the letter you touched comes back.</p>
+      <p>“⋯” opens modifiers, numbers and symbols. One tap on ⌘ applies to the next key; two taps lock it. Rest your left thumb on ⌘ and the right wheel shows the most used shortcuts.</p>
     </fieldset>
-    <fieldset><legend>Historial de práctica</legend>
+    <fieldset><legend>Practice history</legend>
       <div id="hist"></div>
-      <button id="clearHist" type="button">Borrar historial</button>
+      <button id="clearHist" type="button">Clear history</button>
     </fieldset>
-    <button id="close" type="button">Cerrar</button>
+    <button id="close" type="button">Close</button>
   </div>
 </div>
 <label id="hap"><input type="checkbox" switch id="hapSw" tabindex="-1"></label>
@@ -182,12 +182,12 @@ const store = {
 };
 const S = Object.assign({ size: 1, haptic: true, sound: false, rowCue: true, labels: true, context: 'texto',
   vocales: 'R', mac: 'jis', pred: true, borde: true, secure: false }, store.get('ruedas.ajustes', {}));
-if (S.margen3 == null) S.margen3 = 0.03; // margen nuevo (v3.1): el de la v2 era demasiado fuerte
+if (S.margen3 == null) S.margen3 = 0.03; // v3.1 margin: the v2 one was too strong
 const saveS = () => store.set('ruedas.ajustes', S);
 
-// ---------- Datos ----------
-// Direcciones en el sentido del reloj: 0 N, 1 NE, 2 E, 3 SE, 4 S, 5 SW, 6 W, 7 NW.
-// Las 16 letras más frecuentes del español van en el anillo interior (~95 % de las letras).
+// ---------- Data ----------
+// Directions clockwise: 0 N, 1 NE, 2 E, 3 SE, 4 S, 5 SW, 6 W, 7 NW.
+// The 16 most frequent Spanish letters go in the inner ring (~95 % of letters).
 const CON = { inner: ['S','R','N','P','G','B','T','C'], outer: ['V','Q','H','J','W','X','Z','F'] };
 const VOC = { inner: ['E','I','D','U','M','L','O','A'], outer: ['Y','Ñ','?','K','-','¿','.',','] };
 const mirror = r => ({ inner: r.inner.map((_, i) => r.inner[(8 - i) % 8]), outer: r.outer.map((_, i) => r.outer[(8 - i) % 8]) });
@@ -205,13 +205,13 @@ const ATAJOS = {
 };
 const ATAJOS_OUT = ['←','↑','↓','→','␣','⏎','⌫','Esc','W','Q','N','O','T','S','A','Z','D','I','K','L'];
 const NAMES = {
-  texto: { '⌘': { C:'Copiar', V:'Pegar', X:'Cortar', Z:'Deshacer', A:'Todo', S:'Guardar', F:'Buscar', W:'Cerrar', Q:'Salir', N:'Nuevo', T:'Pestaña', O:'Abrir', Tab:'Apps', '␣':'Spotlight', '←':'Inicio', '→':'Fin', '↑':'Arriba', '↓':'Abajo', '⌫':'Borra línea' },
-           '⌥': { '⌫':'Borra palabra', '←':'Palabra', '→':'Palabra' },
-           '⌃': { '←':'Escritorio', '→':'Escritorio', '↑':'Mission C.', '↓':'Ventanas', A:'Inicio', E:'Fin', K:'Borra hasta fin' } },
-  terminal: { '⌘': { C:'Copiar', V:'Pegar', K:'Limpiar', T:'Pestaña', W:'Cerrar', F:'Buscar', N:'Ventana' },
-              '⌃': { C:'Parar', D:'Salir', L:'Limpiar', R:'Historial', A:'Inicio', E:'Fin', U:'Borra línea', W:'Borra palabra', Z:'Suspender' } },
-  finder: { '⌘': { N:'Ventana', O:'Abrir', I:'Info', D:'Duplicar', '⌫':'Papelera', '↑':'Subir', '↓':'Abrir' } },
-  navegador: { '⌘': { T:'Pestaña', W:'Cerrar', L:'Dirección', R:'Recargar', D:'Favorito', N:'Ventana', '←':'Atrás', '→':'Adelante' }, '⌃': { Tab:'Pestaña' } }
+  texto: { '⌘': { C:'Copy', V:'Paste', X:'Cut', Z:'Undo', A:'All', S:'Save', F:'Find', W:'Close', Q:'Quit', N:'New', T:'Tab', O:'Open', Tab:'Apps', '␣':'Spotlight', '←':'Line start', '→':'Line end', '↑':'Top', '↓':'Bottom', '⌫':'Delete line' },
+           '⌥': { '⌫':'Delete word', '←':'Word', '→':'Word' },
+           '⌃': { '←':'Desktop', '→':'Desktop', '↑':'Mission C.', '↓':'Windows', A:'Start', E:'End', K:'Kill to end' } },
+  terminal: { '⌘': { C:'Copy', V:'Paste', K:'Clear', T:'Tab', W:'Close', F:'Find', N:'Window' },
+              '⌃': { C:'Stop', D:'Exit', L:'Clear', R:'History', A:'Start', E:'End', U:'Delete line', W:'Delete word', Z:'Suspend' } },
+  finder: { '⌘': { N:'Window', O:'Open', I:'Info', D:'Duplicate', '⌫':'Trash', '↑':'Up', '↓':'Open' } },
+  navegador: { '⌘': { T:'Tab', W:'Close', L:'Address', R:'Reload', D:'Bookmark', N:'Window', '←':'Back', '→':'Forward' }, '⌃': { Tab:'Tab' } }
 };
 const DEF_CHIPS = { texto: ['⌘C','⌘V','⌘Z','⌘A'], terminal: ['⌃C','⌘K','⌃R','⌘T'], finder: ['⌘C','⌘V','⌘⌫','⌘N'], navegador: ['⌘T','⌘W','⌘L','⌘R'] };
 const ACCENT = { A: ['á'], E: ['é'], I: ['í'], O: ['ó'], U: ['ú','ü'] };
@@ -223,13 +223,13 @@ const FRASES = [
   'Voy a reiniciar el Mac esta noche', 'Busca la carpeta de fotos del viaje', 'Quiero probar esto con calma',
   'Nos vemos el sábado por la tarde', 'Esta semana trabajo desde casa'
 ];
-const RING = [0.15, 0.5];        // zona muerta, borde interior/exterior (fracción de R)
-const TOPBAR = 48;               // franja de arriba para los botones de cada pulgar
-const BORDE = 8, SIGMA = 12;     // franja de borde y anchura de la campana, en grados
+const RING = [0.15, 0.5];        // dead zone, inner/outer border (fraction of R)
+const TOPBAR = 48;               // top band for each thumb's buttons
+const BORDE = 8, SIGMA = 12;     // border band and bell width, in degrees
 const ALPHA = 'abcdefghijklmnñopqrstuvwxyz';
 const WORD_RE = /([a-záéíóúüñ]+)$/i;
 
-// ---------- Modelo que aprende ----------
+// ---------- Learning model ----------
 const blankModel = () => ({ v: 1, c: {}, w: {}, b: {}, rej: 0, letters: 0 });
 let model = Object.assign(blankModel(), store.get('ruedas.modelo', {}));
 let saveTimer = 0;
@@ -262,7 +262,7 @@ function commitWord() {
   const pm = text.slice(0, -m[1].length).match(/([a-záéíóúüñ]+)[^a-záéíóúüñ]*$/i);
   learnWord(m[1].toLowerCase(), pm ? pm[1].toLowerCase() : null);
 }
-// P(letra | lo escrito): suavizado recursivo de Dirichlet desde la uniforme hasta 3 letras de contexto.
+// P(letter | typed): recursive Dirichlet smoothing from uniform up to 3 letters of context.
 function predict() {
   const m = text.match(WORD_RE);
   const h = '_' + baseStr(m ? m[1] : '');
@@ -288,8 +288,8 @@ function suggestions() {
   return cands.sort((x, y) => score(y) - score(x)).slice(0, 3).map(w => ({ w, pre, before, prev }));
 }
 
-// ---------- Estado ----------
-const mods = { '⌘': 0, '⌥': 0, '⌃': 0, '⇧': 0 }; // 0 apagado · 1 un toque · 2 fijo
+// ---------- State ----------
+const mods = { '⌘': 0, '⌥': 0, '⌃': 0, '⇧': 0 }; // 0 off · 1 one tap · 2 locked
 const lastTap = {};
 let layer = 'letras';
 let chord = null;
@@ -300,7 +300,7 @@ const usage = store.get('ruedas.uso', {});
 const W = { L: mkWheel('L'), R: mkWheel('R') };
 function mkWheel(side) { return { side, el: $('#w' + side), pid: null, R: 100, cx: 0, cy: 0, x0: 0, y0: 0, exited: false, sel: null, acc: 0, accTimer: 0, repTimer: 0, repeated: false, chordTimer: 0 }; }
 
-// ---------- Utilidades ----------
+// ---------- Helpers ----------
 const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
 const norm = a => ((a % 360) + 360) % 360;
 const angDiff = (a, b) => ((a - b + 540) % 360) - 180;
@@ -332,7 +332,7 @@ function ringsFor(side) {
 }
 function label(k) {
   if (isLetter(k)) return (upperNow() || hasCmdMods()) ? k : k.toLowerCase();
-  return { '␣': 'espacio', 'Tab': '⇥', 'Esc': 'esc' }[k] ?? k;
+  return { '␣': 'space', 'Tab': '⇥', 'Esc': 'esc' }[k] ?? k;
 }
 function subName(k) {
   const m = activeMods().filter(x => x !== '⇧');
@@ -347,7 +347,7 @@ function predictedKeys() {
   return out;
 }
 
-// ---------- Geometría y dibujo ----------
+// ---------- Geometry and drawing ----------
 function arc(r1, r2, a1, a2) {
   const p = (r, a) => `${(r * Math.cos(rad(a))).toFixed(1)},${(r * Math.sin(rad(a))).toFixed(1)}`;
   return `M${p(r1, a1)}L${p(r2, a1)}A${r2},${r2} 0 0 1 ${p(r2, a2)}L${p(r1, a2)}A${r1},${r1} 0 0 0 ${p(r1, a1)}Z`;
@@ -394,7 +394,7 @@ function clampCenter(w, x, y, z) {
 }
 function layout() {
   const z = $('#zone').getBoundingClientRect();
-  // El círculo entero cabe siempre, debajo de la franja de los botones.
+  // The whole circle always fits, below the button band.
   const R = Math.max(56, Math.min((z.height - TOPBAR - 4) / 2, z.width / 4.2, 190) * S.size);
   for (const side of ['L', 'R']) {
     const w = W[side]; w.R = R;
@@ -402,15 +402,15 @@ function layout() {
     render(side);
     const c = $('#ctl' + side);
     c.style.left = (side === 'L' ? Math.max(R + 2, z.width * 0.22) : Math.min(z.width - R - 2, z.width * 0.78)) + 'px';
-    c.style.top = Math.max(4, z.height - 2 * R - TOPBAR - 2) + 'px'; // justo encima de la rueda en reposo
+    c.style.top = Math.max(4, z.height - 2 * R - TOPBAR - 2) + 'px'; // just above the resting wheel
   }
 }
 
-// ---------- Selección ----------
-// Anillo y dirección con histéresis; después, la regla del borde (sólo letras).
+// ---------- Selection ----------
+// Ring and direction with hysteresis; then the border rule (letters only).
 function computeSel(w, dx, dy) {
   const dist = Math.hypot(dx, dy) / w.R;
-  const t = norm(deg(Math.atan2(dy, dx)) + 90); // 0 = arriba, en el sentido del reloj
+  const t = norm(deg(Math.atan2(dy, dx)) + 90); // 0 = up, clockwise
   const prev = w.sel, H = S.margen3, d = ringsFor(w.side);
   if (dist < RING[0] - (prev ? H / 2 : 0)) return null;
   w.exited = true;
@@ -448,17 +448,17 @@ function showPreview(w) {
   if (w.sel) {
     const acc = accented(w.sel.key, w.acc);
     main = acc ? (upperNow() ? acc.toUpperCase() : acc) : label(w.sel.key);
-    sub = w.sel.fixedFrom ? `corregido (tocaste ${label(w.sel.fixedFrom)})` : subName(w.sel.key);
+    sub = w.sel.fixedFrom ? `corrected (you touched ${label(w.sel.fixedFrom)})` : subName(w.sel.key);
     const comb = activeMods().filter(x => x !== '⇧').join('');
     if (comb && !MODKEYS.includes(w.sel.key)) main = comb + main;
-  } else if (w.exited) { main = '×'; sub = 'cancelar'; }
+  } else if (w.exited) { main = '×'; sub = 'cancel'; }
   else main = label(ringsFor(w.side).center);
   p.textContent = ''; p.append(main);
   if (sub) { const s = document.createElement('small'); s.textContent = sub; p.append(s); }
   p.hidden = false;
 }
 
-// ---------- Respuesta física ----------
+// ---------- Physical feedback ----------
 let ac = null;
 function feedback() {
   if (S.haptic) { if (navigator.vibrate) navigator.vibrate(8); else $('#hap').click(); }
@@ -473,7 +473,7 @@ function tick(freq, vol) {
     o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.03);
   } catch {}
 }
-// Aviso al cambiar de anillo: vibración donde exista (Android); en iPhone, destello y «tic» opcional.
+// Ring-change cue: vibration where available (Android); on iPhone, a flash and an optional tick.
 function rowCross(w) {
   if (!S.rowCue) return;
   if (S.haptic && navigator.vibrate) navigator.vibrate(5);
@@ -483,7 +483,7 @@ function rowCross(w) {
   crossings++;
 }
 
-// ---------- Escribir ----------
+// ---------- Typing ----------
 function pushUndo() { undo.push(text); if (undo.length > 200) undo.shift(); }
 function comboStr(m, k) { return MODKEYS.filter(x => m.includes(x)).join('') + k; }
 function log(s) { $('#log').textContent = s; }
@@ -499,7 +499,7 @@ function doCombo(m, k) {
   else if (combo === '⌥⌫' || combo === '⌃W') { pushUndo(); text = text.replace(/\S*\s*$/, ''); }
   else if (combo === '⌘⌫' || combo === '⌃U') { pushUndo(); text = text.replace(/[^\n]*$/, ''); }
   count(combo);
-  log(`→ Mac  ${combo}${name ? '  ' + name : ''}`);
+  log(`→ ${combo}${name ? '  ' + name : ''}`);
 }
 function emit(k, accLvl, info = {}) {
   const m = activeMods(), cmd = m.filter(x => x !== '⇧');
@@ -514,17 +514,17 @@ function emit(k, accLvl, info = {}) {
     if (!isLetter(k)) commitWord();
     pushUndo(); text += ch;
     if (info.fixedFrom) lastFix = { len: text.length, literal: up ? info.fixedFrom : info.fixedFrom.toLowerCase() };
-    log('→ Mac  ' + ch + (info.fixedFrom ? `  (corregido; tocaste ${info.fixedFrom.toLowerCase()})` : ''));
-  } else if (k === '␣') { commitWord(); pushUndo(); text += ' '; log('→ Mac  espacio'); }
+    log('→ ' + ch + (info.fixedFrom ? `  (corrected; you touched ${info.fixedFrom.toLowerCase()})` : ''));
+  } else if (k === '␣') { commitWord(); pushUndo(); text += ' '; log('→ space'); }
   else if (k === '⌫') {
     if (fix && text.length === fix.len) {
       pushUndo(); text = text.slice(0, -1) + fix.literal; model.rej++; saveModel();
-      log(`Corrección deshecha: ${fix.literal} (seré más prudente)`);
-    } else { if (text) { pushUndo(); text = Array.from(text).slice(0, -1).join(''); } log('→ Mac  ⌫'); }
+      log(`Correction undone: ${fix.literal} (I will be more careful)`);
+    } else { if (text) { pushUndo(); text = Array.from(text).slice(0, -1).join(''); } log('→ ⌫'); }
   }
-  else if (k === '⏎') { if (practice) { finishPractice(); return; } commitWord(); pushUndo(); text += '\n'; log('→ Mac  ⏎'); }
-  else if (m.includes('⇧') && k.length > 1) log('→ Mac  ' + comboStr(m, k));
-  else log('→ Mac  ' + k);
+  else if (k === '⏎') { if (practice) { finishPractice(); return; } commitWord(); pushUndo(); text += '\n'; log('→ ⏎'); }
+  else if (m.includes('⇧') && k.length > 1) log('→ ' + comboStr(m, k));
+  else log('→ ' + k);
   for (const x of MODKEYS) if (mods[x] === 1) mods[x] = 0;
   refresh();
 }
@@ -536,13 +536,13 @@ function tapModifier(k) {
   else mods[k] = 1;
   lastTap[k] = now;
   if (layer === 'mas' && mods[k]) layer = 'letras';
-  log(mods[k] ? `${k} ${mods[k] === 2 ? 'fijo' : 'para la siguiente tecla'}` : `${k} suelto`);
+  log(mods[k] ? `${k} ${mods[k] === 2 ? 'locked' : 'for the next key'}` : `${k} released`);
   refresh();
 }
 function pick(w) {
   const k = w.sel.key;
   if (MODKEYS.includes(k)) {
-    if (chord && chord.used && w.side === 'L') { log(`${k} soltado`); return; }
+    if (chord && chord.used && w.side === 'L') { log(`${k} released`); return; }
     tapModifier(k); return;
   }
   emit(k, w.acc, { side: w.side, fixedFrom: w.sel.fixedFrom });
@@ -555,11 +555,11 @@ function pickSuggestion(s) {
   text = s.before + word + ' ';
   learnWord(s.w, s.prev);
   if (practice && !practice.start) practice.start = performance.now();
-  log('→ Mac  ' + word + ' (sugerencia)');
+  log('→ ' + word + ' (suggestion)');
   refresh();
 }
 
-// ---------- Pantalla ----------
+// ---------- Screen ----------
 function renderText() {
   const t = $('#text'); t.textContent = '';
   const line = document.createElement('div');
@@ -588,7 +588,7 @@ function renderMods() {
   const box = $('#mods'); box.innerHTML = '';
   for (const k of MODKEYS) if (mods[k] && k !== '⇧') {
     const b = document.createElement('button'); b.textContent = k; b.className = mods[k] === 2 ? 'lock' : '';
-    b.setAttribute('aria-label', `${k} ${mods[k] === 2 ? 'fijo' : 'activo'}; tocar para soltar`);
+    b.setAttribute('aria-label', `${k} ${mods[k] === 2 ? 'locked' : 'active'}; tap to release`);
     b.addEventListener('click', () => { mods[k] = 0; refresh(); }); box.append(b);
   }
 }
@@ -614,7 +614,7 @@ function refresh() {
   renderText(); renderSug(); renderMods(); renderChips(); render('L'); render('R');
 }
 
-// ---------- Toques ----------
+// ---------- Touches ----------
 const zone = $('#zone');
 function wheelOf(pid) { return W.L.pid === pid ? W.L : W.R.pid === pid ? W.R : null; }
 function local(e) { const r = zone.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, r }; }
@@ -666,7 +666,7 @@ function release(e, cancelled) {
   if (!cancelled) {
     if (w.sel) { feedback(); pick(w); }
     else if (!w.exited && !w.repeated) { feedback(); emit(ringsFor(w.side).center, 0, { side: w.side }); }
-    else if (w.exited) log('Cancelado');
+    else if (w.exited) log('Cancelled');
   }
   if (w.side === 'L' && chord) chord = null;
   w.pid = null; w.sel = null;
@@ -685,11 +685,11 @@ $('#shift').addEventListener('click', () => { feedback(); tapModifier('⇧'); })
 $('#enter').addEventListener('click', () => { feedback(); emit('⏎'); });
 $('#ime').addEventListener('click', () => {
   feedback(); imeKana = !imeKana;
-  log(imeKana ? '→ Mac  かな (tecla JIS 0x68): escribe en japonés' : '→ Mac  英数 (tecla JIS 0x66): alfabeto');
+  log(imeKana ? '→ かな (JIS key 0x68): Japanese input' : '→ 英数 (JIS key 0x66): alphabet');
   refresh();
 });
 
-// ---------- Práctica ----------
+// ---------- Practice ----------
 function newPhrase() {
   let t; do { t = FRASES[Math.floor(Math.random() * FRASES.length)]; } while (practice && t === practice.target && FRASES.length > 1);
   practice = { target: t, start: 0, load: { L: 0, R: 0 } }; text = ''; undo = []; lastFix = null;
@@ -705,7 +705,7 @@ function lev(a, b) {
   return d[b.length];
 }
 function finishPractice() {
-  if (!practice.start || !text) { log('Escribe la frase y pulsa ⏎'); return; }
+  if (!practice.start || !text) { log('Type the sentence and press ⏎'); return; }
   commitWord();
   const secs = (performance.now() - practice.start) / 1000;
   const n = Array.from(text).length;
@@ -716,38 +716,38 @@ function finishPractice() {
   const h = store.get('ruedas.historial', []);
   h.push({ v: 'v3', wpm: +wpm.toFixed(1), err: +rate.toFixed(1), izq, at: new Date().toISOString().slice(0, 16).replace('T', ' ') });
   store.set('ruedas.historial', h.slice(-100));
-  const msg = `${wpm.toFixed(1)} ppm · ${errs} error${errs === 1 ? '' : 'es'} (${rate.toFixed(0)} %) · izq ${izq} % / der ${100 - izq} %`;
+  const msg = `${wpm.toFixed(1)} wpm · ${errs} error${errs === 1 ? '' : 's'} (${rate.toFixed(0)} %) · left ${izq} % / right ${100 - izq} %`;
   newPhrase(); log(msg);
 }
 $('#btnPractice').addEventListener('click', () => {
-  if (practice) { practice = null; $('#target').hidden = true; $('#btnPractice').classList.remove('on'); text = ''; refresh(); log('Práctica terminada'); return; }
+  if (practice) { practice = null; $('#target').hidden = true; $('#btnPractice').classList.remove('on'); text = ''; refresh(); log('Practice finished'); return; }
   S.context = 'texto'; $('#ctx').value = 'texto'; saveS();
-  $('#btnPractice').classList.add('on'); newPhrase(); log('Escribe la frase y pulsa ⏎ (botón del centro)');
+  $('#btnPractice').classList.add('on'); newPhrase(); log('Type the sentence (Spanish layout) and press ⏎');
 });
 
-// ---------- Ajustes ----------
+// ---------- Settings ----------
 function renderHist() {
   const h = store.get('ruedas.historial', []);
   const box = $('#hist');
-  if (!h.length) { box.innerHTML = '<p>Aún no hay frases. Pulsa «Práctica» y escribe unas cuantas.</p>'; return; }
-  const avg = v => { const r = h.filter(x => x.v === v).slice(-10); return r.length ? `${(r.reduce((s, x) => s + x.wpm, 0) / r.length).toFixed(1)} ppm · ${(r.reduce((s, x) => s + x.err, 0) / r.length).toFixed(1)} % err. (${r.length})` : '—'; };
-  let html = `<table><tr><th>Variante</th><th>Media de las últimas 10</th></tr><tr><td>v3 · Ocho direcciones</td><td>${avg('v3')}</td></tr><tr><td>v2 · QWERTY (retirada)</td><td>${avg('QWERTY')}</td></tr><tr><td>v1 · Anillos (retirada)</td><td>${avg('A')}</td></tr></table>`;
-  html += '<table><tr><th>Fecha</th><th>Var.</th><th>ppm</th><th>% err.</th><th>izq.</th></tr>' + h.slice(-8).reverse().map(x => `<tr><td>${x.at}</td><td>${x.v}</td><td>${x.wpm}</td><td>${x.err}</td><td>${x.izq != null ? x.izq + ' %' : '—'}</td></tr>`).join('') + '</table>';
+  if (!h.length) { box.innerHTML = '<p>No sentences yet. Press “Practice” and type a few.</p>'; return; }
+  const avg = v => { const r = h.filter(x => x.v === v).slice(-10); return r.length ? `${(r.reduce((s, x) => s + x.wpm, 0) / r.length).toFixed(1)} wpm · ${(r.reduce((s, x) => s + x.err, 0) / r.length).toFixed(1)} % err. (${r.length})` : '—'; };
+  let html = `<table><tr><th>Version</th><th>Average of the last 10</th></tr><tr><td>v3 · Eight directions</td><td>${avg('v3')}</td></tr><tr><td>v2 · QWERTY (retired)</td><td>${avg('QWERTY')}</td></tr><tr><td>v1 · Rings (retired)</td><td>${avg('A')}</td></tr></table>`;
+  html += '<table><tr><th>Date</th><th>Ver.</th><th>wpm</th><th>% err.</th><th>left</th></tr>' + h.slice(-8).reverse().map(x => `<tr><td>${x.at}</td><td>${x.v}</td><td>${x.wpm}</td><td>${x.err}</td><td>${x.izq != null ? x.izq + ' %' : '—'}</td></tr>`).join('') + '</table>';
   box.innerHTML = html;
 }
 function renderModelInfo() {
-  $('#modelInfo').textContent = `Aprendido: ${Object.keys(model.w).length} palabras distintas · ${model.letters} letras · ${model.rej} correcciones deshechas. Se guarda sólo en este navegador.`;
+  $('#modelInfo').textContent = `Learnt: ${Object.keys(model.w).length} distinct words · ${model.letters} letters · ${model.rej} corrections undone. Saved only in this browser.`;
 }
 let clearArmed = false;
 $('#clearModel').addEventListener('click', e => {
-  if (!clearArmed) { clearArmed = true; e.target.textContent = '¿Seguro? Toca otra vez para borrarlo todo'; return; }
-  model = blankModel(); store.set('ruedas.modelo', model); clearArmed = false; e.target.textContent = 'Borrar lo aprendido';
-  renderModelInfo(); refresh(); log('Lo aprendido se ha borrado');
+  if (!clearArmed) { clearArmed = true; e.target.textContent = 'Sure? Tap again to erase it all'; return; }
+  model = blankModel(); store.set('ruedas.modelo', model); clearArmed = false; e.target.textContent = 'Clear learnt data';
+  renderModelInfo(); refresh(); log('Learnt data cleared');
 });
 $('#btnSettings').addEventListener('click', () => {
   for (const id of ['size', 'margen3', 'vocales', 'mac']) $('#' + id).value = S[id];
   for (const id of ['labels', 'haptic', 'sound', 'rowCue', 'pred', 'borde', 'secure']) $('#' + id).checked = S[id];
-  clearArmed = false; $('#clearModel').textContent = 'Borrar lo aprendido';
+  clearArmed = false; $('#clearModel').textContent = 'Clear learnt data';
   renderHist(); renderModelInfo(); $('#sheet').hidden = false;
 });
 $('#close').addEventListener('click', () => { $('#sheet').hidden = true; });

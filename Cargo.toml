@@ -1,0 +1,14 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+authors = ["Francesco Catania (@sekaibuilder)"]
+repository = "https://github.com/SekaiBuilder/wheel-keyboard"
+homepage = "https://sekaibuilder.github.io/wheel-keyboard/"
+keywords = ["keyboard", "text-input", "gesture", "touchscreen", "predictive-text"]
+categories = ["text-processing", "gui", "accessibility"]

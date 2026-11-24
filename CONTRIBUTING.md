@@ -1,46 +1,46 @@
-# Contribuir al Teclado de ruedas
+# Contributing to Wheel Keyboard
 
-Gracias por querer mejorarlo. Es un teclado que aprende cómo escribe cada
-persona, así que lo que se teclea es privado por definición. Lee los principios
-antes de mandar cambios.
+Thanks for helping. A keyboard sees everything people type and this one learns
+from it, so privacy is part of the design. Read the principles before sending
+changes.
 
-## Principios no negociables
+## Non-negotiable principles
 
-1. **Nada sale del aparato.** Ni lo que se escribe ni lo aprendido viajan por
-   la red. Lo aprendido vive sólo en `localStorage` de ese navegador. Sin
-   `fetch`, `XMLHttpRequest`, `WebSocket` ni `sendBeacon`. La CI lo comprueba.
-2. **Un solo archivo, sin dependencias.** `index.html` lleva todo el HTML, CSS y
-   JavaScript. Nada de librerías ni pasos de compilación: se abre y funciona.
-   La única carga externa son las fuentes de Google Fonts, y si fallan el
-   teclado sigue funcionando con las del sistema.
-3. **Con contraseña, ni aprende ni sugiere.** Cualquier cambio en la predicción
-   debe respetarlo.
-4. **No mover el dibujo.** La predicción resalta letras, pero nunca cambia el
-   tamaño ni la posición de las letras: la memoria del dedo manda.
-5. **Regla del borde.** En el centro de una letra se escribe siempre esa letra;
-   la corrección sólo decide en la franja junto al borde.
-6. **Docs al día.** Si cambias el comportamiento, actualiza `docs/SPEC.md` y,
-   si se ve, el `README.md`.
+1. **Nothing leaves the device.** Neither what is typed nor what is learnt
+   travels over the network. The engine has no network code and no
+   dependencies; the browser demo makes no requests besides its fonts. CI checks
+   both.
+2. **The engine stays platform-free.** `crates/wheel-keyboard` takes touches and
+   returns actions. No drawing, no OS calls, no dependencies. Platform code
+   goes in the FFI, the desktop app or the host app.
+3. **No learning in password fields.** Any change to prediction must keep it.
+4. **Never move the drawing.** Prediction highlights letters but never changes
+   their size or position: muscle memory comes first.
+5. **Border rule.** In the middle of a letter you always get that letter;
+   correction only decides in the band next to a border.
+6. **Keep the docs in step.** If behaviour changes, update `docs/SPEC.md`, the
+   README and, when it touches the C API, `include/wheel_keyboard.h`.
 
-## Probar los cambios
-
-No hace falta instalar nada:
+## Development
 
 ```bash
-open index.html
+cargo test --workspace                       # engine, C API and acceptance tests
+cargo clippy --workspace --all-targets -- -D warnings
+cargo run -p wheel-keyboard-desktop          # desktop app
+scripts/check.sh                             # privacy checks (also in CI)
 ```
 
-Para probarlo de verdad, ábrelo en un móvil en horizontal (por ejemplo, con
-`python3 -m http.server` y la IP del ordenador en la misma red). El modo
-**Práctica** mide la velocidad y el reparto entre pulgares.
+The browser demo is `docs/index.html`: open it directly, or serve the folder
+(`python3 -m http.server -d docs`) and open it on a phone on the same network.
 
-Antes de subir, la misma comprobación que la CI:
+On Linux the desktop app needs the usual windowing libraries
+(`libxkbcommon-dev libwayland-dev libgl1-mesa-dev` on Debian/Ubuntu).
 
-```bash
-scripts/check.sh
-```
+## Pull requests
 
-## Estilo de commits
-
-- En español, en una línea que diga qué cambia para quien escribe.
-- Un cambio lógico por commit.
+- One logical change per commit, with a message that says what changes for the
+  person typing.
+- New behaviour comes with a test in `crates/wheel-keyboard/tests/` and a line
+  in `docs/SPEC.md`.
+- By contributing you agree that your contribution is licensed under the
+  Apache License 2.0, like the rest of the project.

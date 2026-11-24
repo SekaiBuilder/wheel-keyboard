@@ -1,0 +1,17 @@
+[package]
+name = "wheel-keyboard-ffi"
+description = "C API for the wheel-keyboard engine, for Swift, Kotlin, C and C++ apps"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+name = "wheel_keyboard_c"
+crate-type = ["staticlib", "cdylib", "lib"]
+
+[dependencies]
+wheel-keyboard = { path = "../wheel-keyboard", version = "0.1.0" }
